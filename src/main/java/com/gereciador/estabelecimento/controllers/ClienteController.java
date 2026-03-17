@@ -44,7 +44,7 @@ public class ClienteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ClienteResponseDTO>> findById(){
+    public ResponseEntity<List<ClienteResponseDTO>> findAll(){
         List<ClienteResponseDTO> responseDTO = this.clienteService.getAll();
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }

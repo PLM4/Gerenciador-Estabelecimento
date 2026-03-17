@@ -5,17 +5,18 @@ import com.gereciador.estabelecimento.controllers.dto.response.ProdutoResponseDT
 import com.gereciador.estabelecimento.entities.Categoria;
 import com.gereciador.estabelecimento.entities.Fornecedor;
 import com.gereciador.estabelecimento.entities.Produto;
-import com.gereciador.estabelecimento.exceptions.NotFoundException;
+import com.gereciador.estabelecimento.exceptions.ProdutoNotFoundException;
 import com.gereciador.estabelecimento.mapper.ProdutoMapper;
 import com.gereciador.estabelecimento.repositories.ProdutoRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Stream;
 
-@org.springframework.stereotype.Service
-public class ProdutoService implements Service<ProdutoResponseDTO, ProdutoRequestDTO, Long>{
+@Service
+public class ProdutoService implements BaseService<ProdutoResponseDTO, ProdutoRequestDTO, Long> {
 
     private final ProdutoRepository produtoRepository;
     private final ProdutoMapper produtoMapper;
@@ -32,9 +33,9 @@ public class ProdutoService implements Service<ProdutoResponseDTO, ProdutoReques
     }
 
     @Override
-    public ProdutoResponseDTO update(Long primaryKey, ProdutoRequestDTO obj) throws NotFoundException {
+    public ProdutoResponseDTO update(Long primaryKey, ProdutoRequestDTO obj) {
         Produto produtoRequest = this.produtoMapper.toEntity(obj);
-        Produto produtoUpdating = this.produtoRepository.findById(primaryKey).orElseThrow(() -> new NotFoundException("Produto not found id " + primaryKey));
+        Produto produtoUpdating = this.produtoRepository.findById(primaryKey).orElseThrow(ProdutoNotFoundException::new);
         List<Categoria> categorias = produtoRequest.getCategorias();
         List<Fornecedor> fornecedors = produtoRequest.getFornecedores();
 
@@ -61,8 +62,8 @@ public class ProdutoService implements Service<ProdutoResponseDTO, ProdutoReques
     }
 
     @Override
-    public ProdutoResponseDTO getById(Long primaryKey) throws NotFoundException {
-        Produto produto = this.produtoRepository.findById(primaryKey).orElseThrow(() -> new NotFoundException("Produto not found id " + primaryKey));
+    public ProdutoResponseDTO getById(Long primaryKey) {
+        Produto produto = this.produtoRepository.findById(primaryKey).orElseThrow(ProdutoNotFoundException::new);
         return this.produtoMapper.toDTO(produto);
     }
 

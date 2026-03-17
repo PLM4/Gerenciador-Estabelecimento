@@ -1,8 +1,6 @@
 package com.gereciador.estabelecimento.mapper;
 
-import com.gereciador.estabelecimento.exceptions.NotFoundException;
-
-public interface Mapper<DRT, DRS, E> {
-    E toEntity(DRS dtoRequest) throws NotFoundException;
-    DRT toDTO(E entity);
+public interface Mapper<T, S, E> {
+    E toEntity(S dtoRequest);
+    T toDTO(E entity);
 }

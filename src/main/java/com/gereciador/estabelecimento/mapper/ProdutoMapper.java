@@ -7,23 +7,25 @@ import com.gereciador.estabelecimento.controllers.dto.response.ProdutoResponseDT
 import com.gereciador.estabelecimento.entities.Produto;
 import com.gereciador.estabelecimento.repositories.CategoriaRepository;
 import com.gereciador.estabelecimento.repositories.FornecedorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 public class ProdutoMapper implements Mapper<ProdutoResponseDTO, ProdutoRequestDTO, Produto>{
-    @Autowired
-    private CategoriaRepository categoriaRepository;
-    @Autowired
-    private FornecedorRepository fornecedorRepository;
-    @Autowired
-    private CategoriaMapper categoriaMapper;
-    @Autowired
-    private FornecedorMapper fornecedorMapper;
+    private final CategoriaRepository categoriaRepository;
+    private final FornecedorRepository fornecedorRepository;
+    private final CategoriaMapper categoriaMapper;
+    private final FornecedorMapper fornecedorMapper;
 
-    @Override
+  public ProdutoMapper(CategoriaRepository categoriaRepository, FornecedorRepository fornecedorRepository, CategoriaMapper categoriaMapper, FornecedorMapper fornecedorMapper) {
+    this.categoriaRepository = categoriaRepository;
+    this.fornecedorRepository = fornecedorRepository;
+    this.categoriaMapper = categoriaMapper;
+    this.fornecedorMapper = fornecedorMapper;
+  }
+
+  @Override
     public Produto toEntity(ProdutoRequestDTO dtoRequest) {
         Produto produto =  new Produto();
         produto.setNome(dtoRequest.nome());

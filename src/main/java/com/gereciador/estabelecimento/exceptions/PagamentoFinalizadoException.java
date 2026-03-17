@@ -1,9 +1,9 @@
 package com.gereciador.estabelecimento.exceptions;
 
-public class PagamentoFinalizadoException extends Exception {
+public class PagamentoFinalizadoException extends RuntimeException {
 
-    public PagamentoFinalizadoException(String message) {
-        super(message);
+    public PagamentoFinalizadoException() {
+        super("Pagamento já foi finalizado");
     }
 
 }

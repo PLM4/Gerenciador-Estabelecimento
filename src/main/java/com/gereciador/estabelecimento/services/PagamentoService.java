@@ -7,9 +7,11 @@ import com.gereciador.estabelecimento.entities.Pedido;
 import com.gereciador.estabelecimento.entities.Produto;
 import com.gereciador.estabelecimento.enums.Status;
 import com.gereciador.estabelecimento.enums.TipoPagamento;
-import com.gereciador.estabelecimento.exceptions.NotFoundException;
 import com.gereciador.estabelecimento.exceptions.PagamentoFinalizadoException;
+import com.gereciador.estabelecimento.exceptions.PagamentoNotFoundException;
+import com.gereciador.estabelecimento.exceptions.PedidoNotFoundException;
 import com.gereciador.estabelecimento.repositories.PedidoRepository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gereciador.estabelecimento.controllers.dto.request.PagamentoRequestDTO;
@@ -18,8 +20,8 @@ import com.gereciador.estabelecimento.entities.Pagamento;
 import com.gereciador.estabelecimento.mapper.PagamentoMapper;
 import com.gereciador.estabelecimento.repositories.PagamentoRepository;
 
-@org.springframework.stereotype.Service
-public class PagamentoService implements Service<PagamentoResponseDTO, PagamentoRequestDTO, Long>{
+@Service
+public class PagamentoService implements BaseService<PagamentoResponseDTO, PagamentoRequestDTO, Long> {
 
     private final PagamentoRepository pagamentoRepository;
     private final PagamentoMapper mapper;
@@ -33,15 +35,15 @@ public class PagamentoService implements Service<PagamentoResponseDTO, Pagamento
 
     @Override
     @Transactional
-    public PagamentoResponseDTO save(PagamentoRequestDTO obj) throws NotFoundException {
+    public PagamentoResponseDTO save(PagamentoRequestDTO obj) {
         Pagamento pagamento = this.pagamentoRepository.save(this.mapper.toEntity(obj));
         return this.mapper.toDTO(pagamento);
     }
 
     @Override
-    public PagamentoResponseDTO update(Long primaryKey, PagamentoRequestDTO obj) throws NotFoundException {
+    public PagamentoResponseDTO update(Long primaryKey, PagamentoRequestDTO obj) {
         Pagamento pagamentoRequest = this.mapper.toEntity(obj);
-        Pagamento pagamento = this.pagamentoRepository.findById(primaryKey).orElseThrow();
+        Pagamento pagamento = this.pagamentoRepository.findById(primaryKey).orElseThrow(PagamentoNotFoundException::new);
 
         if(pagamentoRequest.getCliente() != null){pagamento.setCliente(pagamentoRequest.getCliente());}
         if(pagamentoRequest.getData() != null){pagamento.setData(pagamentoRequest.getData());}
@@ -61,8 +63,8 @@ public class PagamentoService implements Service<PagamentoResponseDTO, Pagamento
     }
 
     @Override
-    public PagamentoResponseDTO getById(Long primaryKey) throws NotFoundException {
-        Pagamento pagamento = this.pagamentoRepository.findById(primaryKey).orElseThrow(() -> new NotFoundException("Pagamento not found com ID" + primaryKey ));
+    public PagamentoResponseDTO getById(Long primaryKey) {
+        Pagamento pagamento = this.pagamentoRepository.findById(primaryKey).orElseThrow(PagamentoNotFoundException::new);
         return this.mapper.toDTO(pagamento);
     }
 
@@ -73,12 +75,12 @@ public class PagamentoService implements Service<PagamentoResponseDTO, Pagamento
     }
 
     @Transactional
-    public PagamentoResponseDTO finalizarPedido(Long primary, TipoPagamento tipoPagamento) throws NotFoundException, PagamentoFinalizadoException {
-        Pagamento pagamento = this.pagamentoRepository.findById(primary).orElseThrow(() -> new NotFoundException("Pagamento not found ID " + primary));
+    public PagamentoResponseDTO finalizarPedido(Long primary, TipoPagamento tipoPagamento) {
+        Pagamento pagamento = this.pagamentoRepository.findById(primary).orElseThrow(PagamentoNotFoundException::new);
 
-        if (pagamento.getStatusPagamento() == Status.FINALIZADO) throw new PagamentoFinalizadoException("Pagamento com o id " + primary + " já foi finalizado");
+        if (pagamento.getStatusPagamento() == Status.FINALIZADO) throw new PagamentoFinalizadoException();
 
-        Pedido pedido = this.pedidoRepository.findById(pagamento.getPedido().getId()).orElseThrow(() -> new NotFoundException("Pedido not found ID" + pagamento.getPedido().getId()));
+        Pedido pedido = this.pedidoRepository.findById(pagamento.getPedido().getId()).orElseThrow(PedidoNotFoundException::new);
         pagamento.setTipoPagamento(tipoPagamento);
         pagamento.setStatusPagamento(Status.FINALIZADO);
 
@@ -91,7 +93,6 @@ public class PagamentoService implements Service<PagamentoResponseDTO, Pagamento
             if (produto.getQuantidade() >= itemPedido.getQuantidade()) produto.setQuantidade(produto.getQuantidade() - itemPedido.getQuantidade());
             else produto.setQuantidade(0);
         });
-
 
         return this.mapper.toDTO(this.pagamentoRepository.save(pagamento));
     }

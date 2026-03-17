@@ -3,8 +3,6 @@ package com.gereciador.estabelecimento.controllers;
 import com.gereciador.estabelecimento.controllers.dto.request.PagamentoRequestDTO;
 import com.gereciador.estabelecimento.controllers.dto.request.TipoPagamentoDTO;
 import com.gereciador.estabelecimento.controllers.dto.response.PagamentoResponseDTO;
-import com.gereciador.estabelecimento.exceptions.NotFoundException;
-import com.gereciador.estabelecimento.exceptions.PagamentoFinalizadoException;
 import com.gereciador.estabelecimento.services.PagamentoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,19 +21,19 @@ public class PagamentoController {
     }
 
     @PostMapping
-    public ResponseEntity<PagamentoResponseDTO> create(@RequestBody PagamentoRequestDTO dto) throws NotFoundException {
+    public ResponseEntity<PagamentoResponseDTO> create(@RequestBody PagamentoRequestDTO dto) {
         PagamentoResponseDTO pagamentoResponseDTO = this.pagamentoService.save(dto);
         return new ResponseEntity<>(pagamentoResponseDTO, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PagamentoResponseDTO> findById(@PathVariable Long id) throws NotFoundException {
+    public ResponseEntity<PagamentoResponseDTO> findById(@PathVariable Long id) {
         PagamentoResponseDTO pagamentoResponseDTO = this.pagamentoService.getById(id);
         return new ResponseEntity<>(pagamentoResponseDTO, HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<PagamentoResponseDTO> update(@PathVariable Long id, @RequestBody PagamentoRequestDTO dto) throws NotFoundException {
+    public ResponseEntity<PagamentoResponseDTO> update(@PathVariable Long id, @RequestBody PagamentoRequestDTO dto) {
         PagamentoResponseDTO pagamentoResponseDTO = this.pagamentoService.update(id, dto);
         return new ResponseEntity<>(pagamentoResponseDTO, HttpStatus.OK);
     }
@@ -53,7 +51,7 @@ public class PagamentoController {
     }
 
     @PatchMapping("/finalizar/{id}")
-    public ResponseEntity<PagamentoResponseDTO> finalizarPedido(@PathVariable Long id, @RequestBody TipoPagamentoDTO tipoPagamentoDTO) throws NotFoundException, PagamentoFinalizadoException {
+    public ResponseEntity<PagamentoResponseDTO> finalizarPedido(@PathVariable Long id, @RequestBody TipoPagamentoDTO tipoPagamentoDTO) {
         PagamentoResponseDTO dto = this.pagamentoService.finalizarPedido(id, tipoPagamentoDTO.tipoPagamento());
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }

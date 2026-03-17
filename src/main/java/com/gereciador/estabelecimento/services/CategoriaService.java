@@ -3,22 +3,24 @@ package com.gereciador.estabelecimento.services;
 import com.gereciador.estabelecimento.controllers.dto.request.CategoriaRequestDTO;
 import com.gereciador.estabelecimento.controllers.dto.response.CategoriaResponseDTO;
 import com.gereciador.estabelecimento.entities.Categoria;
-import com.gereciador.estabelecimento.exceptions.NotFoundException;
+import com.gereciador.estabelecimento.exceptions.CategoriaNotFoundException;
 import com.gereciador.estabelecimento.mapper.CategoriaMapper;
 import com.gereciador.estabelecimento.repositories.CategoriaRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@org.springframework.stereotype.Service
-public class CategoriaService implements Service<CategoriaResponseDTO, CategoriaRequestDTO, Long> {
+@Service
+public class CategoriaService implements BaseService<CategoriaResponseDTO, CategoriaRequestDTO, Long> {
 
-    @Autowired
-    private CategoriaRepository repository;
-    @Autowired
-    private CategoriaMapper mapper;
+    private final CategoriaRepository repository;
+    private final CategoriaMapper mapper;
 
+    public CategoriaService(CategoriaRepository repository, CategoriaMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
+    }
 
     @Override
     @Transactional
@@ -29,7 +31,8 @@ public class CategoriaService implements Service<CategoriaResponseDTO, Categoria
 
     @Override
     public CategoriaResponseDTO update(Long primaryKey, CategoriaRequestDTO obj) {
-        Categoria categoriaUpdated = this.repository.findById(primaryKey).orElseThrow();
+        Categoria categoriaUpdated = this.repository.findById(primaryKey)
+            .orElseThrow(CategoriaNotFoundException::new);
         if (obj.nome() != null) categoriaUpdated.setNome(obj.nome());
         Categoria categoria = this.repository.save(categoriaUpdated);
         return this.mapper.toDTO(categoria);
@@ -42,8 +45,8 @@ public class CategoriaService implements Service<CategoriaResponseDTO, Categoria
     }
 
     @Override
-    public CategoriaResponseDTO getById(Long primaryKey) throws NotFoundException {
-        Categoria categoria = this.repository.findById(primaryKey).orElseThrow(() -> new NotFoundException("Categoria not foun id " + primaryKey));
+    public CategoriaResponseDTO getById(Long primaryKey) {
+        Categoria categoria = this.repository.findById(primaryKey).orElseThrow(CategoriaNotFoundException::new);
         return this.mapper.toDTO(categoria);
     }
 
@@ -55,8 +58,8 @@ public class CategoriaService implements Service<CategoriaResponseDTO, Categoria
                 .toList();
     }
 
-    public CategoriaResponseDTO findCategoriaByNome(String nome) throws NotFoundException {
-        Categoria categoria = this.repository.findCategoriaByNome(nome).orElseThrow(() -> new NotFoundException("Categoria not found nome: " + nome));
+    public CategoriaResponseDTO findCategoriaByNome(String nome) {
+        Categoria categoria = this.repository.findCategoriaByNome(nome).orElseThrow(CategoriaNotFoundException::new);
         return this.mapper.toDTO(categoria);
     }
 }

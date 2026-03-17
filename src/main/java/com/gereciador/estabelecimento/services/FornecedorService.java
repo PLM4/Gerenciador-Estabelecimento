@@ -3,15 +3,16 @@ package com.gereciador.estabelecimento.services;
 import com.gereciador.estabelecimento.controllers.dto.request.FornecedorRequestDTO;
 import com.gereciador.estabelecimento.controllers.dto.response.FornecedorResponseDTO;
 import com.gereciador.estabelecimento.entities.Fornecedor;
-import com.gereciador.estabelecimento.exceptions.NotFoundException;
+import com.gereciador.estabelecimento.exceptions.FornecedorNotFoundException;
 import com.gereciador.estabelecimento.mapper.FornecedorMapper;
 import com.gereciador.estabelecimento.repositories.FornecedorRepository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@org.springframework.stereotype.Service
-public class FornecedorService implements  Service<FornecedorResponseDTO, FornecedorRequestDTO, Long>{
+@Service
+public class FornecedorService implements BaseService<FornecedorResponseDTO, FornecedorRequestDTO, Long> {
 
     private final FornecedorRepository fornecedorRepository;
     private final FornecedorMapper mapper = new FornecedorMapper();
@@ -28,8 +29,8 @@ public class FornecedorService implements  Service<FornecedorResponseDTO, Fornec
     }
 
     @Override
-    public FornecedorResponseDTO update(Long primaryKey, FornecedorRequestDTO obj) throws NotFoundException {
-        Fornecedor fornecedorUpdated = this.fornecedorRepository.findById(primaryKey).orElseThrow(() -> new NotFoundException("Fornecedor not found id " + primaryKey));
+    public FornecedorResponseDTO update(Long primaryKey, FornecedorRequestDTO obj) {
+        Fornecedor fornecedorUpdated = this.fornecedorRepository.findById(primaryKey).orElseThrow(FornecedorNotFoundException::new);
         if(obj.nome() != null) fornecedorUpdated.setNome(obj.nome());
         if (obj.cnpj() != null) fornecedorUpdated.setCnpj(obj.cnpj());
         Fornecedor fornecedor = this.fornecedorRepository.save(fornecedorUpdated);
@@ -43,8 +44,8 @@ public class FornecedorService implements  Service<FornecedorResponseDTO, Fornec
     }
 
     @Override
-    public FornecedorResponseDTO getById(Long primaryKey) throws NotFoundException {
-        Fornecedor fornecedor = this.fornecedorRepository.findById(primaryKey).orElseThrow(() -> new NotFoundException("Fornecedor not found id " + primaryKey));
+    public FornecedorResponseDTO getById(Long primaryKey) {
+        Fornecedor fornecedor = this.fornecedorRepository.findById(primaryKey).orElseThrow(FornecedorNotFoundException::new);
         return this.mapper.toDTO(fornecedor);
     }
 

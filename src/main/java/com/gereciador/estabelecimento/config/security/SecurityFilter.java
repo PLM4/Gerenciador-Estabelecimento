@@ -6,7 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,15 +18,16 @@ import java.io.IOException;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
 
-    private final String HEADER_NAME = "Authorization";
+    private final TokenUtil tokenService;
+    private final UserService userService;
 
-    @Autowired
-    private TokenUtil tokenService;
-    @Autowired
-    private UserService userService;
+    public SecurityFilter(TokenUtil tokenService, UserService userService) {
+        this.tokenService = tokenService;
+        this.userService = userService;
+    }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         String token = recoverToken(request);
         if (token != null) {
             var login = this.tokenService.validateToken(token);
@@ -39,7 +40,8 @@ public class SecurityFilter extends OncePerRequestFilter {
 
 
     private String recoverToken(HttpServletRequest request) {
-        var authHeader = request.getHeader(this.HEADER_NAME);
+      String HEADER_NAME = "Authorization";
+      var authHeader = request.getHeader(HEADER_NAME);
         if (authHeader == null) return null;
         return authHeader.replace("Bearer ", "");
     }

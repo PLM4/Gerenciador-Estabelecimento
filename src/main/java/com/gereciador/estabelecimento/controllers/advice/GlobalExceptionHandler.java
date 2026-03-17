@@ -1,14 +1,15 @@
 package com.gereciador.estabelecimento.controllers.advice;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.gereciador.estabelecimento.exceptions.EstadoInvalidoException;
-import com.gereciador.estabelecimento.exceptions.NotFoundException;
-import com.gereciador.estabelecimento.exceptions.PagamentoFinalizadoException;
 
+import com.gereciador.estabelecimento.controllers.dto.response.ErroResponseDTO;
+import com.gereciador.estabelecimento.exceptions.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -26,7 +27,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    // XXX: ProblemDetail: https://www.rfc-editor.org/rfc/rfc9457
 
     enum ErrorType {
         ERRO_INESPERADO, REQUISICAO_INVALIDA, ESTADO_INVÁLIDO, ERRO_DE_VALIDAÇÃO, ACESSO_NEGADO;
@@ -78,9 +78,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problemDetail;
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    public ProblemDetail notFoundException(NotFoundException ex){
-                return buildProblemDetail(ex, HttpStatus.BAD_REQUEST, ErrorType.REQUISICAO_INVALIDA);
+    private String stackTraceToString(Exception ex) {
+        StringWriter errors = new StringWriter();
+        ex.printStackTrace(new PrintWriter(errors));
+        return errors.toString();
+    }
+
+    @ExceptionHandler({
+        ClienteNotFoundException.class,
+        CategoriaNotFoundException.class,
+        FornecedorNotFoundException.class,
+        PedidoNotFoundException.class,
+        PagamentoNotFoundException.class,
+        ProdutoNotFoundException.class
+    })
+    public ResponseEntity<ErroResponseDTO> notFoundException(RuntimeException exception){
+        return new ResponseEntity<>(new ErroResponseDTO(exception.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(PagamentoFinalizadoException.class)

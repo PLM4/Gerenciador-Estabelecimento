@@ -4,13 +4,15 @@ package com.gereciador.estabelecimento.services;
 import com.gereciador.estabelecimento.controllers.dto.request.ClienteRequestDTO;
 import com.gereciador.estabelecimento.controllers.dto.response.ClienteResponseDTO;
 import com.gereciador.estabelecimento.entities.Cliente;
+import com.gereciador.estabelecimento.exceptions.ClienteNotFoundException;
 import com.gereciador.estabelecimento.mapper.ClienteMapper;
 import com.gereciador.estabelecimento.repositories.ClienteRepository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-@org.springframework.stereotype.Service
-public class ClienteService implements Service<ClienteResponseDTO, ClienteRequestDTO, Long> {
+@Service
+public class ClienteService implements BaseService<ClienteResponseDTO, ClienteRequestDTO, Long> {
 
     private final ClienteRepository clienteRepository;
     private final ClienteMapper mapper = new ClienteMapper();
@@ -28,7 +30,9 @@ public class ClienteService implements Service<ClienteResponseDTO, ClienteReques
 
     @Override
     public ClienteResponseDTO update(Long primaryKey, ClienteRequestDTO obj) {
-        Cliente clienteUpdated = this.clienteRepository.findById(primaryKey).orElseThrow();
+        Cliente clienteUpdated = this.clienteRepository.findById(primaryKey).
+            orElseThrow(ClienteNotFoundException::new);
+
         if(obj.nome() != null) clienteUpdated.setNome(obj.nome());
         if (obj.cpf() != null) clienteUpdated.setCpf(obj.cpf());
         clienteUpdated.setContatos(obj.contatos());
@@ -38,7 +42,9 @@ public class ClienteService implements Service<ClienteResponseDTO, ClienteReques
 
     @Override
     public ClienteResponseDTO getById(Long primaryKey) {
-        Cliente cliente = this.clienteRepository.findById(primaryKey).orElseThrow();
+        Cliente cliente = this.clienteRepository.findById(primaryKey)
+            .orElseThrow(ClienteNotFoundException::new);
+
         return this.mapper.toDTO(cliente);
     }
 

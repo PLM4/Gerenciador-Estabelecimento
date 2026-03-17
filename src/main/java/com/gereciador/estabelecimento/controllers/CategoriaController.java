@@ -3,7 +3,6 @@ package com.gereciador.estabelecimento.controllers;
 
 import com.gereciador.estabelecimento.controllers.dto.request.CategoriaRequestDTO;
 import com.gereciador.estabelecimento.controllers.dto.response.CategoriaResponseDTO;
-import com.gereciador.estabelecimento.exceptions.NotFoundException;
 import com.gereciador.estabelecimento.services.CategoriaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +26,7 @@ public class CategoriaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoriaResponseDTO> findById(@PathVariable Long id) throws NotFoundException {
+    public ResponseEntity<CategoriaResponseDTO> findById(@PathVariable Long id) {
         CategoriaResponseDTO responseDTO = this.categoriaService.getById(id);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
@@ -45,13 +44,13 @@ public class CategoriaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoriaResponseDTO>> findByAll(){
+    public ResponseEntity<List<CategoriaResponseDTO>> findAll(){
         List<CategoriaResponseDTO> responseDTO = this.categoriaService.getAll();
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<CategoriaResponseDTO> findByNome(@RequestParam String nome) throws NotFoundException {
+    public ResponseEntity<CategoriaResponseDTO> findByNome(@RequestParam String nome) {
         CategoriaResponseDTO responseDTO = this.categoriaService.findCategoriaByNome(nome);
         return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }

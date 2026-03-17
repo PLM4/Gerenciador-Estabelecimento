@@ -2,7 +2,6 @@ package com.gereciador.estabelecimento.controllers;
 
 import com.gereciador.estabelecimento.controllers.dto.request.ProdutoRequestDTO;
 import com.gereciador.estabelecimento.controllers.dto.response.ProdutoResponseDTO;
-import com.gereciador.estabelecimento.exceptions.NotFoundException;
 import com.gereciador.estabelecimento.services.ProdutoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +26,13 @@ public class ProdutoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProdutoResponseDTO> findById(@PathVariable Long id) throws NotFoundException {
+    public ResponseEntity<ProdutoResponseDTO> findById(@PathVariable Long id) {
         ProdutoResponseDTO produtoResponseDTO = this.produtoService.getById(id);
         return new ResponseEntity<>(produtoResponseDTO, HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ProdutoResponseDTO> update(@PathVariable Long id, @RequestBody ProdutoRequestDTO dto) throws NotFoundException {
+    public ResponseEntity<ProdutoResponseDTO> update(@PathVariable Long id, @RequestBody ProdutoRequestDTO dto) {
         ProdutoResponseDTO produtoResponseDTO = this.produtoService.update(id, dto);
         return new ResponseEntity<>(produtoResponseDTO, HttpStatus.OK);
     }
@@ -49,10 +48,4 @@ public class ProdutoController {
         List<ProdutoResponseDTO> produtoResponseDTOS = this.produtoService.getAll();
         return new ResponseEntity<>(produtoResponseDTOS, HttpStatus.OK);
     }
-
-    public ResponseEntity<List<ProdutoResponseDTO>> findAllPage(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        List<ProdutoResponseDTO> produtoResponseDTOS = this.produtoService.getAllPage(page, size);
-        return new ResponseEntity<>(produtoResponseDTOS, HttpStatus.OK);
-    }
-
 }

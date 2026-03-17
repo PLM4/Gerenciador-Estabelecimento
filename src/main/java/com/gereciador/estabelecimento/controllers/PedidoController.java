@@ -3,7 +3,6 @@ package com.gereciador.estabelecimento.controllers;
 
 import com.gereciador.estabelecimento.controllers.dto.request.PedidoRequestDTO;
 import com.gereciador.estabelecimento.controllers.dto.response.PedidoResponseDTO;
-import com.gereciador.estabelecimento.exceptions.NotFoundException;
 import com.gereciador.estabelecimento.services.PedidoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,24 +21,24 @@ public class PedidoController {
     }
 
     @PostMapping
-    public ResponseEntity<PedidoResponseDTO> create(@RequestBody PedidoRequestDTO dto) throws NotFoundException {
+    public ResponseEntity<PedidoResponseDTO> create(@RequestBody PedidoRequestDTO dto) {
         PedidoResponseDTO pedidoResponseDTO = this.pedidoService.save(dto);
         return new ResponseEntity<>(pedidoResponseDTO, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PedidoResponseDTO> findById(@PathVariable Long id) throws NotFoundException {
+    public ResponseEntity<PedidoResponseDTO> findById(@PathVariable Long id) {
         PedidoResponseDTO pedidoResponseDTO = this.pedidoService.getById(id);
         return new ResponseEntity<>(pedidoResponseDTO, HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<PedidoResponseDTO> update(@PathVariable Long id, @RequestBody PedidoRequestDTO dto) throws NotFoundException {
+    public ResponseEntity<PedidoResponseDTO> update(@PathVariable Long id, @RequestBody PedidoRequestDTO dto) {
         PedidoResponseDTO pedidoResponseDTO = this.pedidoService.update(id, dto);
         return new ResponseEntity<>(pedidoResponseDTO, HttpStatus.OK);
     }
 
-    @DeleteMapping("{/id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         this.pedidoService.delete(id);
         return ResponseEntity.noContent().build();
