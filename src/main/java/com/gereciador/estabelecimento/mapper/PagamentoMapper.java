@@ -18,38 +18,39 @@ public class PagamentoMapper implements Mapper<PagamentoResponseDTO, PagamentoRe
     private final ClienteMapper clienteMapper;
     private final PedidoMapper pedidoMapper;
 
-    public PagamentoMapper(ClienteRepository clienteRepository, PedidoRepository pedidoRepository, ClienteMapper clienteMapper, PedidoMapper pedidoMapper) {
+    public PagamentoMapper(ClienteRepository clienteRepository, PedidoRepository pedidoRepository,
+            ClienteMapper clienteMapper, PedidoMapper pedidoMapper) {
         this.clienteRepository = clienteRepository;
         this.pedidoRepository = pedidoRepository;
         this.clienteMapper = clienteMapper;
         this.pedidoMapper = pedidoMapper;
     }
 
-
     @Override
-    public Pagamento toEntity(PagamentoRequestDTO dtoRequest){
+    public Pagamento toEntity(PagamentoRequestDTO dtoRequest) {
         Pagamento pagamento = new Pagamento();
-        pagamento.setPedido(this.pedidoRepository.findById(dtoRequest.idPedido()).orElseThrow(() -> new PedidoNotFoundException("Pedido não encontrado")));
-        if (dtoRequest.idCliente() != null) pagamento.setCliente(this.clienteRepository.findById(dtoRequest.idCliente()).orElse(null));
+        pagamento.setPedido(
+                this.pedidoRepository.findById(dtoRequest.idPedido()).orElseThrow(PedidoNotFoundException::new));
+        if (dtoRequest.idCliente() != null)
+            pagamento.setCliente(this.clienteRepository.findById(dtoRequest.idCliente()).orElse(null));
         return pagamento;
     }
 
     @Override
-public PagamentoResponseDTO toDTO(Pagamento entity) {
-    ClienteResponseDTO clienteDTO = null;
+    public PagamentoResponseDTO toDTO(Pagamento entity) {
+        ClienteResponseDTO clienteDTO = null;
 
-    if (entity.getCliente() != null) {
-        clienteDTO = this.clienteMapper.toDTO(entity.getCliente());
+        if (entity.getCliente() != null) {
+            clienteDTO = this.clienteMapper.toDTO(entity.getCliente());
+        }
+
+        return new PagamentoResponseDTO(
+                entity.getId(),
+                entity.getValor(),
+                entity.getData(),
+                entity.getPedido().getId(),
+                clienteDTO,
+                entity.getTipoPagamento(),
+                entity.getStatusPagamento());
     }
-
-    return new PagamentoResponseDTO(
-        entity.getId(),
-        entity.getValor(),
-        entity.getData(),
-        entity.getPedido().getId(),
-        clienteDTO,
-        entity.getTipoPagamento(),
-        entity.getStatusPagamento()
-    );
-}   
 }

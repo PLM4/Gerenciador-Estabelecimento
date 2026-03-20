@@ -1,6 +1,5 @@
 package com.gereciador.estabelecimento.config;
 
-import com.gereciador.estabelecimento.config.security.SecurityFilter;
 import com.gereciador.estabelecimento.enums.UserRole;
 import com.gereciador.estabelecimento.services.UserService;
 import org.springframework.context.annotation.Bean;

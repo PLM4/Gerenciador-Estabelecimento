@@ -49,8 +49,7 @@ class ClienteControllerTest {
             1L,
             payload.nome(),
             payload.cpf(),
-            payload.contatos(), 
-            List.of()
+            payload.contatos()
     );
 
     when(clienteService.save(payload)).thenReturn(response);
@@ -72,7 +71,6 @@ class ClienteControllerTest {
                 1L,
                 "Cliente",
                 "000.000.000-00",
-                List.of(),
                 List.of()
         );
 
@@ -92,14 +90,12 @@ class ClienteControllerTest {
                 1L,
                 "test1",
                 "000.000.000",
-                List.of(),
                 List.of()
         );
         ClienteResponseDTO dto2 = new ClienteResponseDTO(
                 1L,
                 "test2",
                 "111.111.111",
-                List.of(),
                 List.of()
         );
 
@@ -146,8 +142,7 @@ class ClienteControllerTest {
                 id,
                 update.nome(),
                 update.cpf(),
-                update.contatos(),
-                List.of()
+                update.contatos()
         );
 
         when(clienteService.update(id,update)).thenReturn(response);

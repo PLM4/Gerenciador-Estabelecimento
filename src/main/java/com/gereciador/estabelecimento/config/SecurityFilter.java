@@ -1,4 +1,4 @@
-package com.gereciador.estabelecimento.config.security;
+package com.gereciador.estabelecimento.config;
 
 import com.gereciador.estabelecimento.util.TokenUtil;
 import com.gereciador.estabelecimento.services.UserService;

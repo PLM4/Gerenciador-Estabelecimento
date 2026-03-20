@@ -45,13 +45,13 @@ class PagamentoControllerTest {
         1L,
         "client1",
         "123-123-123-13",
-        List.of("99-9999-998"),
-        Collections.emptyList()
+        List.of("99-9999-998")
     );
     PagamentoResponseDTO response = new PagamentoResponseDTO(
         1L,
         BigDecimal.valueOf(123),
         LocalDate.now(),
+        clienteResponse.id(),
         clienteResponse,
         TipoPagamento.PIX,
         Status.INICIALIZADO
@@ -82,13 +82,13 @@ class PagamentoControllerTest {
         1L,
         "client1",
         "123-123-123-13",
-        List.of("99-9999-998"),
-        Collections.emptyList()
+        List.of("99-9999-998")
     );
     PagamentoResponseDTO response = new PagamentoResponseDTO(
         id,
         BigDecimal.valueOf(123),
         LocalDate.now(),
+        clienteResponse.id(),
         clienteResponse,
         TipoPagamento.CARTAO,
         Status.INICIALIZADO
@@ -118,13 +118,13 @@ class PagamentoControllerTest {
         1L,
         "client1",
         "123-123-123-13",
-        List.of("99-9999-998"),
-        Collections.emptyList()
+        List.of("99-9999-998")
     );
     PagamentoResponseDTO response = new PagamentoResponseDTO(
         id,
         BigDecimal.valueOf(123),
         LocalDate.now(),
+        clienteResponse.id(),
         clienteResponse,
         TipoPagamento.PIX,
         Status.INICIALIZADO
@@ -151,13 +151,13 @@ class PagamentoControllerTest {
         1L,
         "client1",
         "123-123-123-13",
-        List.of("99-9999-998"),
-        Collections.emptyList()
-    );
+        List.of("99-9999-998")
+        );
     PagamentoResponseDTO response1 = new PagamentoResponseDTO(
         1L,
         BigDecimal.valueOf(123),
         LocalDate.now(),
+        clienteResponse1.id(),
         clienteResponse1,
         TipoPagamento.PIX,
         Status.INICIALIZADO
@@ -167,13 +167,13 @@ class PagamentoControllerTest {
         2L,
         "client2",
         "187-122-111-12",
-        List.of("99-9967-998"),
-        Collections.emptyList()
+        List.of("99-9967-998")
     );
     PagamentoResponseDTO response2 = new PagamentoResponseDTO(
         2L,
         BigDecimal.valueOf(234),
         LocalDate.now(),
+        clienteResponse2.id(),
         clienteResponse2,
         TipoPagamento.DINHEIRO,
         Status.INICIALIZADO
@@ -203,13 +203,13 @@ class PagamentoControllerTest {
         1L,
         "client1",
         "123-123-123-13",
-        List.of("99-9999-998"),
-        Collections.emptyList()
+        List.of("99-9999-998")
     );
     PagamentoResponseDTO response = new PagamentoResponseDTO(
         id,
         BigDecimal.valueOf(123),
         LocalDate.now(),
+        clienteResponse.id(),
         clienteResponse,
         TipoPagamento.PIX,
         Status.FINALIZADO

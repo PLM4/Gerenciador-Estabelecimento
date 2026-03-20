@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class ItemPedidoMapper implements Mapper<List<ItemPedidoResponseDTO>, List<ItemPedidoRequestDTO>, List<ItemPedido>> {
+public class ItemPedidoMapper
+        implements Mapper<List<ItemPedidoResponseDTO>, List<ItemPedidoRequestDTO>, List<ItemPedido>> {
 
     private final ProdutoRepository produtoRepository;
 
@@ -35,16 +36,14 @@ public class ItemPedidoMapper implements Mapper<List<ItemPedidoResponseDTO>, Lis
         dtoRequest.forEach(dto -> {
             if (dto.quantidade() == null || dto.quantidade() <= 0) {
                 throw new IllegalArgumentException(
-                        "Quantidade inválida para o produto ID " + dto.produtoId()
-                );
+                        "Quantidade inválida para o produto ID " + dto.produtoId());
             }
         });
 
         var dtoMap = dtoRequest.stream()
                 .collect(Collectors.toMap(
                         ItemPedidoRequestDTO::produtoId,
-                        dto -> dto
-                ));
+                        dto -> dto));
 
         return produtos.stream()
                 .map(produto -> {

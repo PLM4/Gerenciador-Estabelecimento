@@ -30,18 +30,23 @@ public class PedidoService implements BaseService<PedidoResponseDTO, PedidoReque
 
     @Override
     public PedidoResponseDTO update(Long primaryKey, PedidoRequestDTO obj) {
-        Pedido pedido = this.repository.findById(primaryKey).orElseThrow(() -> new PedidoNotFoundException("Pedido não encontrado"));
+        Pedido pedido = this.repository.findById(primaryKey).orElseThrow(PedidoNotFoundException::new);
 
         Pedido pedidoRequest = this.mapper.toEntity(obj);
 
-        if(pedidoRequest.getItensPedido() != null) {
-            List<ItemPedido> setItens = Stream.concat(pedidoRequest.getItensPedido().stream(), pedido.getItensPedido().stream()).distinct().toList();
+        if (pedidoRequest.getItensPedido() != null) {
+            List<ItemPedido> setItens = Stream
+                    .concat(pedidoRequest.getItensPedido().stream(), pedido.getItensPedido().stream()).distinct()
+                    .toList();
             pedido.setItensPedido(setItens);
         }
 
-        if(pedidoRequest.getData() != null) pedido.setData(pedidoRequest.getData());
-        if(pedidoRequest.getStatusPedido() != null) pedido.setStatusPedido(pedidoRequest.getStatusPedido());
-        if(pedidoRequest.getPagamento() != null) pedido.setPagamento(pedidoRequest.getPagamento());
+        if (pedidoRequest.getData() != null)
+            pedido.setData(pedidoRequest.getData());
+        if (pedidoRequest.getStatusPedido() != null)
+            pedido.setStatusPedido(pedidoRequest.getStatusPedido());
+        if (pedidoRequest.getPagamento() != null)
+            pedido.setPagamento(pedidoRequest.getPagamento());
 
         Pedido pedidoUpdating = this.repository.save(pedido);
         return this.mapper.toDTO(pedidoUpdating);
@@ -54,13 +59,14 @@ public class PedidoService implements BaseService<PedidoResponseDTO, PedidoReque
 
     @Override
     public PedidoResponseDTO getById(Long primaryKey) {
-        Pedido pedido = this.repository.findById(primaryKey).orElseThrow(() -> new PedidoNotFoundException("Pedido não encontrado"));
+        Pedido pedido = this.repository.findById(primaryKey)
+                .orElseThrow(PedidoNotFoundException::new);
         return this.mapper.toDTO(pedido);
     }
 
     @Override
     public List<PedidoResponseDTO> getAll() {
         List<Pedido> pedidos = this.repository.findAll();
-        return pedidos.stream().map(this.mapper::toDTO).toList();  
+        return pedidos.stream().map(this.mapper::toDTO).toList();
     }
 }

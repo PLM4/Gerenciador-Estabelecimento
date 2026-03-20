@@ -26,8 +26,9 @@ public class PagamentoService implements BaseService<PagamentoResponseDTO, Pagam
     private final PagamentoRepository pagamentoRepository;
     private final PagamentoMapper mapper;
     private final PedidoRepository pedidoRepository;
-    
-    public PagamentoService(PagamentoRepository pagamentoRepository, PagamentoMapper mapper, PedidoRepository pedidoRepository) {
+
+    public PagamentoService(PagamentoRepository pagamentoRepository, PagamentoMapper mapper,
+            PedidoRepository pedidoRepository) {
         this.pagamentoRepository = pagamentoRepository;
         this.mapper = mapper;
         this.pedidoRepository = pedidoRepository;
@@ -43,14 +44,27 @@ public class PagamentoService implements BaseService<PagamentoResponseDTO, Pagam
     @Override
     public PagamentoResponseDTO update(Long primaryKey, PagamentoRequestDTO obj) {
         Pagamento pagamentoRequest = this.mapper.toEntity(obj);
-        Pagamento pagamento = this.pagamentoRepository.findById(primaryKey).orElseThrow(PagamentoNotFoundException::new);
+        Pagamento pagamento = this.pagamentoRepository.findById(primaryKey)
+                .orElseThrow(PagamentoNotFoundException::new);
 
-        if(pagamentoRequest.getCliente() != null){pagamento.setCliente(pagamentoRequest.getCliente());}
-        if(pagamentoRequest.getData() != null){pagamento.setData(pagamentoRequest.getData());}
-        if(pagamentoRequest.getPedido() != null){pagamento.setPedido(pagamentoRequest.getPedido());}
-        if(pagamentoRequest.getValor() != null){pagamento.setValor(pagamentoRequest.getValor());}
-        if(pagamentoRequest.getTipoPagamento() != null){pagamento.setTipoPagamento(pagamentoRequest.getTipoPagamento());}
-        if(pagamentoRequest.getStatusPagamento() != null){pagamento.setStatusPagamento(pagamentoRequest.getStatusPagamento());}
+        if (pagamentoRequest.getCliente() != null) {
+            pagamento.setCliente(pagamentoRequest.getCliente());
+        }
+        if (pagamentoRequest.getData() != null) {
+            pagamento.setData(pagamentoRequest.getData());
+        }
+        if (pagamentoRequest.getPedido() != null) {
+            pagamento.setPedido(pagamentoRequest.getPedido());
+        }
+        if (pagamentoRequest.getValor() != null) {
+            pagamento.setValor(pagamentoRequest.getValor());
+        }
+        if (pagamentoRequest.getTipoPagamento() != null) {
+            pagamento.setTipoPagamento(pagamentoRequest.getTipoPagamento());
+        }
+        if (pagamentoRequest.getStatusPagamento() != null) {
+            pagamento.setStatusPagamento(pagamentoRequest.getStatusPagamento());
+        }
 
         Pagamento pagamentoSaved = this.pagamentoRepository.save(pagamento);
         return this.mapper.toDTO(pagamentoSaved);
@@ -59,28 +73,31 @@ public class PagamentoService implements BaseService<PagamentoResponseDTO, Pagam
     @Override
     @Transactional
     public void delete(Long primaryKey) {
-       this.pagamentoRepository.deleteById(primaryKey);
+        this.pagamentoRepository.deleteById(primaryKey);
     }
 
     @Override
     public PagamentoResponseDTO getById(Long primaryKey) {
-        Pagamento pagamento = this.pagamentoRepository.findById(primaryKey).orElseThrow(PagamentoNotFoundException::new);
+        Pagamento pagamento = this.pagamentoRepository.findById(primaryKey)
+                .orElseThrow(PagamentoNotFoundException::new);
         return this.mapper.toDTO(pagamento);
     }
 
     @Override
     public List<PagamentoResponseDTO> getAll() {
-       List<Pagamento> pagamento = this.pagamentoRepository.findAll();
-       return pagamento.stream().map(this.mapper::toDTO).toList();
+        List<Pagamento> pagamento = this.pagamentoRepository.findAll();
+        return pagamento.stream().map(this.mapper::toDTO).toList();
     }
 
     @Transactional
     public PagamentoResponseDTO finalizarPedido(Long primary, TipoPagamento tipoPagamento) {
         Pagamento pagamento = this.pagamentoRepository.findById(primary).orElseThrow(PagamentoNotFoundException::new);
 
-        if (pagamento.getStatusPagamento() == Status.FINALIZADO) throw new PagamentoFinalizadoException();
+        if (pagamento.getStatusPagamento() == Status.FINALIZADO)
+            throw new PagamentoFinalizadoException();
 
-        Pedido pedido = this.pedidoRepository.findById(pagamento.getPedido().getId()).orElseThrow(PedidoNotFoundException::new);
+        Pedido pedido = this.pedidoRepository.findById(pagamento.getPedido().getId())
+                .orElseThrow(PedidoNotFoundException::new);
         pagamento.setTipoPagamento(tipoPagamento);
         pagamento.setStatusPagamento(Status.FINALIZADO);
 
@@ -88,13 +105,15 @@ public class PagamentoService implements BaseService<PagamentoResponseDTO, Pagam
 
         List<ItemPedido> itensPedidos = pedido.getItensPedido();
 
-        itensPedidos.forEach(itemPedido ->  {
+        itensPedidos.forEach(itemPedido -> {
             Produto produto = itemPedido.getProduto();
-            if (produto.getQuantidade() >= itemPedido.getQuantidade()) produto.setQuantidade(produto.getQuantidade() - itemPedido.getQuantidade());
-            else produto.setQuantidade(0);
+            if (produto.getQuantidade() >= itemPedido.getQuantidade())
+                produto.setQuantidade(produto.getQuantidade() - itemPedido.getQuantidade());
+            else
+                produto.setQuantidade(0);
         });
 
         return this.mapper.toDTO(this.pagamentoRepository.save(pagamento));
     }
-    
+
 }
